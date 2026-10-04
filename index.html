@@ -36,10 +36,10 @@
 <footer><div class="wrap"><b>सरपंच Exit Poll</b><br>यह स्वतंत्र सर्वे अनुमान प्रकाशित करने का पोर्टल है। आधिकारिक चुनाव परिणाम के लिए संबंधित निर्वाचन प्राधिकरण के परिणाम देखें।<br><br>© 2026 Sarpanch Exit Poll</div></footer>
 <div class="modal" id="modal" onclick="if(event.target===this)closeModal()"><div class="sheet"><div class="sheetHead"><div><div class="meta" id="mMeta"></div><h2 id="mTitle" style="margin:4px 0">परिणाम</h2></div><button class="close" onclick="closeModal()">✕</button></div><div id="candidates"></div><button class="share" onclick="shareResult()">📤 Share करें</button><div class="notice">यह अनुमान सर्वे डेटा पर आधारित है और अंतिम चुनाव परिणाम नहीं है।</div></div></div>
 <script>
-const API="https://cyqannqjmgmjcrtryhhk.supabase.co/functions/v1/sarpanch-api";
+const API="https://cyqannqjmgmjcrtryhhk.supabase.co/functions/v1/sarpanch-api";const API_KEY="sb_publishable_BCwBpqRViAfwMFheIZZu7g_le1Xo5tt";
 let db={districts:[],blocks:[],gramPanchayats:[],candidates:[],settings:[]}, resultsData=[], selectedGp=null;
 const $=id=>document.getElementById(id);
-async function api(url="",opts={}){const r=await fetch(API+url,opts);const d=await r.json();if(!r.ok)throw new Error(d.error||"Server error");return d}
+async function api(url="",opts={}){const r=await fetch(API+url,{...opts,headers:{"apikey":API_KEY,...(opts.headers||{})}});const d=await r.json();if(!r.ok)throw new Error(d.error||"Server error");return d}
 async function init(){try{db=await api("?action=bootstrap");resultsData=await api("?action=results");populateDistricts();renderResults(resultsData)}catch(e){$("cards").innerHTML='<div class="panel">डेटा अभी उपलब्ध नहीं है। Admin panel से पंचायत और उम्मीदवार जोड़ें।</div>'}}
 function populateDistricts(){const s=$("district");s.innerHTML='<option value="">जिला चुनें</option>'+db.districts.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join("")}
 function loadBlocks(){const id=$("district").value;const rows=db.blocks.filter(x=>x.district_id===id);$("block").disabled=!id;$("gp").disabled=true;$("block").innerHTML='<option value="">पंचायत समिति चुनें</option>'+rows.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join("");$("gp").innerHTML='<option value="">ग्राम पंचायत चुनें</option>';$("votePanel").style.display="none"}
