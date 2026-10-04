@@ -19,9 +19,9 @@ body{margin:0;background:#f5f8fb;color:#102a43;font-family:system-ui,-apple-syst
 </section>
 </main>
 <script>
-const API="https://cyqannqjmgmjcrtryhhk.supabase.co/functions/v1/sarpanch-api";let code="",db={};
+const API="https://cyqannqjmgmjcrtryhhk.supabase.co/functions/v1/sarpanch-api";const API_KEY="sb_publishable_BCwBpqRViAfwMFheIZZu7g_le1Xo5tt";let code="",db={};
 const $=id=>document.getElementById(id);
-async function api(body){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","x-admin-code":code},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(d.error||"Server error");return d}
+async function api(body){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":API_KEY,"x-admin-code":code},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(d.error||"Server error");return d}
 async function login(){code=$("code").value.trim();try{await api({action:"admin_login"});$("login").style.display="none";$("app").style.display="block";await reload()}catch(e){show("loginStatus",e.message,false)}}
 async function reload(){try{db=await api({action:"admin_bootstrap"});fill();render()}catch(e){show("adminStatus",e.message,false)}}
 function fill(){const ds=db.districts||[],bs=db.blocks||[],gps=db.gramPanchayats||[];$("blockDistrict").innerHTML=ds.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join("");$("gpBlock").innerHTML=bs.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join("");const opts=gps.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join("");$("candidateGp").innerHTML=opts;$("settingsGp").innerHTML=opts}
