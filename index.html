@@ -70,5 +70,24 @@ function setStatus(msg,ok){const s=$("voteStatus");s.textContent=msg;s.className
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 init();
 </script>
+<script type="module">
+(async()=>{
+  try{
+    const {createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+    const supabase=createClient("https://cyqannqjmgmjcrtryhhk.supabase.co","sb_publishable_BCwBpqRViAfwMFheIZZu7g_le1Xo5tt");
+    const channel=supabase.channel("poll-results");
+    channel.on("broadcast",{event:"INSERT"},async()=>{try{await refresh()}catch(e){}});
+    channel.on("broadcast",{event:"UPDATE"},async()=>{try{await refresh()}catch(e){}});
+    channel.on("broadcast",{event:"DELETE"},async()=>{try{await refresh()}catch(e){}});
+    channel.subscribe((status)=>{
+      if(status==="SUBSCRIBED"){
+        document.documentElement.dataset.liveResults="connected";
+      }
+    });
+  }catch(e){
+    console.warn("Live results connection unavailable",e);
+  }
+})();
+</script>
 </body>
 </html>
